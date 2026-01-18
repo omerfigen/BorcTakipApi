@@ -1,0 +1,8 @@
+C:\Users\PC\Desktop\BorcProjesi\BorcTakipApi\obj\Debug\net10.0\BorcTakipApi.csproj.AssemblyReference.cache
+C:\Users\PC\Desktop\BorcProjesi\BorcTakipApi\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\PC\Desktop\BorcProjesi\BorcTakipApi\obj\Debug\net10.0\BorcTakipApi.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\PC\Desktop\BorcProjesi\BorcTakipApi\obj\Debug\net10.0\BorcTakipApi.AssemblyInfoInputs.cache
+C:\Users\PC\Desktop\BorcProjesi\BorcTakipApi\obj\Debug\net10.0\BorcTakipApi.AssemblyInfo.cs
+C:\Users\PC\Desktop\BorcProjesi\BorcTakipApi\obj\Debug\net10.0\BorcTakipApi.csproj.CoreCompileInputs.cache
+C:\Users\PC\Desktop\BorcProjesi\BorcTakipApi\obj\Debug\net10.0\BorcTakipApi.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\PC\Desktop\BorcProjesi\BorcTakipApi\obj\Debug\net10.0\BorcTakipApi.MvcApplicationPartsAssemblyInfo.cache
