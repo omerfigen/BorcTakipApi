@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Borç Takibi</title>
+    <style>
+        :root { --primary: #1a1a2e; --secondary: #c9a86a; --bg: #f4f7f6; --danger: #ff7675; --success: #55efc4; }
+        body { background: var(--bg); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; display: none; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        #loginArea { width: 380px; margin: 100px auto; text-align: center; border-top: 5px solid var(--secondary); }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; outline: none; box-sizing: border-box; }
+        button { background: var(--primary); color: var(--secondary); font-weight: bold; cursor: pointer; border: 1px solid var(--secondary); }
+        .stats { display: flex; justify-content: space-around; text-align: center; padding-bottom: 15px; }
+        .stat-item b { display: block; font-size: 22px; margin-top: 5px; }
+        .item { background: white; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-left: 8px solid #ccc; position: relative; }
+        .Alinan { border-left-color: var(--danger); }
+        .Verilen { border-left-color: var(--success); }
+        .btn-status { width: auto; float: right; padding: 6px 15px; font-size: 11px; border: none; border-radius: 20px; cursor: pointer; }
+        .unpaid { background: var(--danger); color: white; }
+        .paid { background: var(--success); color: var(--primary); }
+        .is-paid { opacity: 0.5; background: #eee; }
+        .is-paid b, .is-paid span { text-decoration: line-through; }
+        .desc-text { color: #666; font-style: italic; font-size: 13px; display: block; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+    <div id="loginArea" class="card">
+        <h2 style="color: var(--primary);">Borç Takibi</h2>
+        <input type="text" id="user" placeholder="Kullanıcı Adı">
+        <input type="password" id="pass" placeholder="Şifre">
+        <button onclick="login()">GİRİŞ YAP</button>
+        <button onclick="register()" style="background:none; color:var(--primary); border:none;">Yeni Hesap Oluştur</button>
+    </div>
+
+    <div id="appArea" class="container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 id="hello">Hoş Geldiniz</h2>
+            <button onclick="logout()" style="width:auto; padding:8px 25px;">Çıkış Yap</button>
+        </div>
+
+        <div class="card stats">
+            <div class="stat-item">BORÇLARIM <b id="s-borc" style="color:var(--danger)">0 TL</b></div>
+            <div class="stat-item">ALACAKLARIM <b id="s-alacak" style="color:var(--success)">0 TL</b></div>
+            <div class="stat-item">NET DURUM <b id="s-net">0 TL</b></div>
+        </div>
+
+        <div class="card">
+            <h3>Yeni İşlem Kaydet</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                <select id="f-tip"><option value="Alinan">Borç Aldım</option><option value="Verilen">Borç Verdim</option></select>
+                <input id="f-isim" placeholder="Kişi İsmi">
+                <input id="f-miktar" type="number" placeholder="Miktar (TL)">
+            </div>
+            <input id="f-aciklama" placeholder="Açıklama (Opsiyonel)">
+            <button onclick="save()">İŞLEMİ KAYDET</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:25px;">
+            <div><h3 style="color:var(--danger);">Borçlarım</h3><div id="l-Alinan"></div></div>
+            <div><h3 style="color:var(--success);">Alacaklarım</h3><div id="l-Verilen"></div></div>
+        </div>
+    </div>
+
+<script>
+    const API = "http://localhost:5200/api";
+    let currentUser = JSON.parse(localStorage.getItem("user"));
+
+    async function login() {
+        const u = document.getElementById("user").value, p = document.getElementById("pass").value;
+        const res = await fetch(`${API}/auth/login`, { 
+            method:'POST', 
+            headers:{'Content-Type':'application/json'}, 
+            body:JSON.stringify({username:u, password:p}) 
+        });
+        if(res.ok) { 
+            localStorage.setItem("user", JSON.stringify(await res.json())); 
+            location.reload(); 
+        } else alert("Hata!");
+    }
+
+    async function register() {
+        const u = document.getElementById("user").value, p = document.getElementById("pass").value;
+        const res = await fetch(`${API}/auth/register`, { 
+            method:'POST', 
+            headers:{'Content-Type':'application/json'}, 
+            body:JSON.stringify({username:u, password:p}) 
+        });
+        if(res.ok) alert("Kayıt başarılı, giriş yapabilirsiniz.");
+        else alert("Bu kullanıcı adı kullanılıyor.");
+    }
+
+    function logout() { localStorage.removeItem("user"); location.reload(); }
+
+    async function save() {
+        const isim = document.getElementById("f-isim").value;
+        const miktar = document.getElementById("f-miktar").value;
+        const aciklama = document.getElementById("f-aciklama").value;
+        const tip = document.getElementById("f-tip").value;
+
+        if(!isim || !miktar) return alert("İsim ve miktar zorunludur!");
+
+        const res = await fetch(`${API}/borc`, { 
+            method:'POST', 
+            headers:{'Content-Type':'application/json'}, 
+            body:JSON.stringify({ 
+                isim: isim, 
+                miktar: parseFloat(miktar), 
+                aciklama: aciklama || "", 
+                tip: tip, 
+                userId: currentUser.id,
+                isPaid: false
+            }) 
+        });
+
+        if(res.ok) {
+            document.getElementById("f-isim").value=""; 
+            document.getElementById("f-miktar").value=""; 
+            document.getElementById("f-aciklama").value="";
+            init(); 
+        } else {
+            alert("Kaydetme hatası oluştu!");
+        }
+    }
+
+    async function toggleStatus(id) {
+        await fetch(`${API}/borc/toggle/${id}`, { method: 'POST' });
+        init();
+    }
+
+    async function init() {
+        if(!currentUser) return;
+        document.getElementById("loginArea").style.display="none";
+        document.getElementById("appArea").style.display="block";
+        document.getElementById("hello").innerText = "Sayın " + currentUser.username;
+
+        const res = await fetch(`${API}/borc/${currentUser.id}`);
+        const data = await res.json();
+        document.getElementById("l-Alinan").innerHTML = ""; 
+        document.getElementById("l-Verilen").innerHTML = "";
+
+        data.forEach(x => {
+            let btnText = x.tip === "Alinan" ? (x.isPaid ? "ÖDENDİ ✓" : "ÖDENMEDİ") : (x.isPaid ? "ALINDI ✓" : "ALINMADI");
+            let btnClass = x.isPaid ? "paid" : "unpaid";
+            document.getElementById("l-"+x.tip).innerHTML += `
+                <div class="item ${x.tip} ${x.isPaid ? 'is-paid' : ''}">
+                    <button class="btn-status ${btnClass}" onclick="toggleStatus(${x.id})">${btnText}</button>
+                    <span><b>${x.isim}</b>: ${x.miktar.toLocaleString()} TL</span><br>
+                    <span class="desc-text">${x.aciklama || ''}</span>
+                    <small style="color:#999;">${new Date(x.tarih).toLocaleDateString('tr-TR')}</small>
+                </div>`;
+        });
+
+        const resS = await fetch(`${API}/stats/${currentUser.id}`);
+        const s = await resS.json();
+        document.getElementById("s-borc").innerText = s.totalAlinan.toLocaleString() + " TL";
+        document.getElementById("s-alacak").innerText = s.totalVerilen.toLocaleString() + " TL";
+        document.getElementById("s-net").innerText = s.netStatus.toLocaleString() + " TL";
+        document.getElementById("s-net").style.color = s.netStatus >= 0 ? "var(--success)" : "var(--danger)";
+    }
+    init();
+</script>
+</body>
+</html>
