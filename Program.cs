@@ -1,107 +1,89 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using BorcTakipApi.Data;
+using System;
+using System.Linq;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
+namespace BorcTakipApi
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-// SQL SERVER BAĞLANTISI
-builder.Services.AddDbContext<BorcDbContext>(opt => 
-    opt.UseSqlServer("Server=DESKTOP-LJR4TSD\\SQLEXPRESS;Database=PremiumBorcDB;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true"));
+            // 1. SERVİS KAYITLARI (DI Container)
+            builder.Services.AddControllers();
 
-builder.Services.AddCors(options => options.AddDefaultPolicy(p => 
-    p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+            // Veritabanı bağlantısı yapılandırması
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            if (!string.IsNullOrEmpty(connectionString))
+            {
+                builder.Services.AddDbContext<BorcDbContext>(opt => 
+                    opt.UseSqlServer(connectionString));
+            }
+            else
+            {
+                // Fallback: SQLite
+                builder.Services.AddDbContext<BorcDbContext>(opt => 
+                    opt.UseSqlite("Data Source=borc.db"));
+            }
 
-var app = builder.Build();
-app.UseCors();
-app.MapControllers();
+            // CORS politikası
+            builder.Services.AddCors(options => options.AddDefaultPolicy(p => 
+                p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
-using (var scope = app.Services.CreateScope()) {
-    var db = scope.ServiceProvider.GetRequiredService<BorcDbContext>();
-   
-    db.Database.EnsureCreated(); 
-}
+            var app = builder.Build();
 
-app.Run();
+            // 2. ARA KATMANLAR (MIDDLEWARE)
+            app.UseDefaultFiles(); 
+            app.UseStaticFiles();
+            app.UseCors();
+            app.MapControllers();
 
+            Console.WriteLine("✓ Uygulama başlatılıyor...");
 
-public class User {
-    public int Id { get; set; }
-    public string Username { get; set; } = "";
-    public string Password { get; set; } = "";
-}
+            
+            InitializeDatabase(app);
 
-public class Borc {
-    public int Id { get; set; }
-    public string Isim { get; set; } = "";
-    public double Miktar { get; set; }
-    public string Aciklama { get; set; } = "";
-    public string Tip { get; set; } = "Alinan"; 
-    public int UserId { get; set; }             
-    public DateTime Tarih { get; set; } = DateTime.Now;
-    public bool IsPaid { get; set; } = false; 
-}
+            app.Run();
+        }
 
-public class BorcDbContext : DbContext {
-    public BorcDbContext(DbContextOptions<BorcDbContext> options) : base(options) { }
-    public DbSet<Borc> Borclar => Set<Borc>();
-    public DbSet<User> Users => Set<User>();
-}
-
-//  API KONTROLLER
-[ApiController] [Route("api/auth")]
-public class AuthController : ControllerBase {
-    private readonly BorcDbContext _db;
-    public AuthController(BorcDbContext db) => _db = db;
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] User loginUser) {
-        var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == loginUser.Username && u.Password == loginUser.Password);
-        return user == null ? Unauthorized() : Ok(user);
-    }
-
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] User newUser) {
-        if (await _db.Users.AnyAsync(u => u.Username == newUser.Username)) return BadRequest();
-        _db.Users.Add(newUser);
-        await _db.SaveChangesAsync();
-        return Ok(newUser);
-    }
-}
-
-[ApiController] [Route("api/borc")]
-public class BorcController : ControllerBase {
-    private readonly BorcDbContext _db;
-    public BorcController(BorcDbContext db) => _db = db;
-
-    [HttpGet("{userId}")]
-    public async Task<IActionResult> Getir(int userId) => 
-        Ok(await _db.Borclar.Where(x => x.UserId == userId).OrderByDescending(x => x.Tarih).ToListAsync());
-
-    [HttpPost]
-    public async Task<IActionResult> Ekle([FromBody] Borc yeni) {
-        yeni.Tarih = DateTime.Now; 
-        _db.Borclar.Add(yeni);
-        await _db.SaveChangesAsync();
-        return Ok(yeni);
-    }
-
-    [HttpPost("toggle/{id}")]
-    public async Task<IActionResult> Toggle(int id) {
-        var b = await _db.Borclar.FindAsync(id);
-        if (b != null) { b.IsPaid = !b.IsPaid; await _db.SaveChangesAsync(); }
-        return Ok();
-    }
-}
-
-[ApiController] [Route("api/stats")]
-public class StatsController : ControllerBase {
-    private readonly BorcDbContext _db;
-    public StatsController(BorcDbContext db) => _db = db;
-    [HttpGet("{userId}")]
-    public async Task<IActionResult> GetStats(int userId) {
-        var list = await _db.Borclar.Where(b => b.UserId == userId).ToListAsync();
-        var b = list.Where(x => x.Tip == "Alinan" && !x.IsPaid).Sum(x => x.Miktar);
-        var a = list.Where(x => x.Tip == "Verilen" && !x.IsPaid).Sum(x => x.Miktar);
-        return Ok(new { totalAlinan = b, totalVerilen = a, netStatus = a - b });
+        /// <summary>
+        /// Uygulama başlatılırken veritabanını oluşturan ve gerekli temizlikleri yapan metod.
+        /// </summary>
+        private static void InitializeDatabase(WebApplication app)
+        {
+            using (var scope = app.Services.CreateScope()) 
+            {
+                try 
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<BorcDbContext>();
+                    
+                    // Veritabanı ve tabloların var olduğundan emin ol
+                    db.Database.EnsureCreated();
+                    
+                    // Boş kullanıcı kayıtlarını temizleme işlemi
+                    var emptyUsers = db.Users
+                        .Where(u => string.IsNullOrWhiteSpace(u.Username) || string.IsNullOrWhiteSpace(u.Password))
+                        .ToList();
+                        
+                    if (emptyUsers.Any()) 
+                    {
+                        db.Users.RemoveRange(emptyUsers);
+                        db.SaveChanges();
+                    }
+                    
+                    Console.WriteLine("✓ Veritabanı hazır");
+                } 
+                catch (Exception ex) 
+                {
+                    Console.WriteLine($"✗ Veritabanı başlatma hatası: {ex.Message}");
+                }
+            }
+        }
     }
 }

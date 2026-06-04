@@ -1,0 +1,27 @@
+# Binaries and build outputs
+bin/
+obj/
+publish/
+yayin/
+.vs/
+
+# Databases
+*.db
+borc.db
+
+# Zip files and archives
+*.zip
+*.tar
+*.gz
+
+# Certificates
+*.pfx
+
+# User-specific files
+*.user
+*.userosscache
+*.sln.docstates
+
+# System files
+.DS_Store
+Thumbs.db

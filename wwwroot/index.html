@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borç Takibi | Kişisel Finans Yönetimi</title>
+    <!-- Harici stil dosyamız -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Giriş ve Kayıt Ekranı -->
+    <div id="loginArea" class="card">
+        <h2 style="color: var(--primary);">Borç Takibi</h2>
+        <input type="text" id="user" placeholder="Kullanıcı Adı">
+        <input type="password" id="pass" placeholder="Şifre">
+        <button onclick="login()">GİRİŞ YAP</button>
+        <button onclick="register()" style="background:none; color:var(--primary); border:none;">Yeni Hesap Oluştur</button>
+    </div>
+
+    <!-- Uygulama Ana Ekranı -->
+    <div id="appArea" class="container">
+        
+        <!-- Üst Başlık ve Çıkış -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 id="hello">Hoş Geldiniz</h2>
+            <button onclick="logout()" style="width:auto; padding:8px 25px;">Çıkış Yap</button>
+        </div>
+
+        <!-- İstatistik Kartı -->
+        <div class="card stats">
+            <div class="stat-item">BORÇLARIM <b id="s-borc" style="color:var(--danger)">0 TL</b></div>
+            <div class="stat-item">ALACAKLARIM <b id="s-alacak" style="color:var(--success)">0 TL</b></div>
+            <div class="stat-item">NET DURUM <b id="s-net">0 TL</b></div>
+        </div>
+
+        <!-- Yeni İşlem Formu -->
+        <div class="card">
+            <h3>Yeni İşlem Kaydet</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                <select id="f-tip">
+                    <option value="Alinan">Borç Aldım</option>
+                    <option value="Verilen">Borç Verdim</option>
+                </select>
+                <input id="f-isim" placeholder="Kişi İsmi">
+                <input id="f-miktar" type="number" placeholder="Miktar (TL)" min="0" step="0.01">
+            </div>
+            <input id="f-aciklama" placeholder="Açıklama (Opsiyonel)">
+            <button onclick="save()">İŞLEMİ KAYDET</button>
+        </div>
+
+        <!-- Listeler -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:25px;">
+            <div>
+                <h3 style="color:var(--danger);">Borçlarım</h3>
+                <div id="l-Alinan"></div>
+            </div>
+            <div>
+                <h3 style="color:var(--success);">Alacaklarım</h3>
+                <div id="l-Verilen"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Harici JS dosyamız -->
+    <script src="js/app.js"></script>
+</body>
+</html>

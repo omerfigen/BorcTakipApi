@@ -1,0 +1,130 @@
+:root {
+    --primary: #1a1a2e;
+    --secondary: #c9a86a;
+    --bg: #f4f7f6;
+    --danger: #ff7675;
+    --success: #55efc4;
+}
+
+body {
+    background: var(--bg);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: none;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+}
+
+#loginArea {
+    width: 380px;
+    margin: 100px auto;
+    text-align: center;
+    border-top: 5px solid var(--secondary);
+}
+
+input,
+select,
+button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+    box-sizing: border-box;
+}
+
+button {
+    background: var(--primary);
+    color: var(--secondary);
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid var(--secondary);
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    padding-bottom: 15px;
+}
+
+.stat-item b {
+    display: block;
+    font-size: 22px;
+    margin-top: 5px;
+}
+
+.item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    border-left: 8px solid #ccc;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.Alinan {
+    border-left-color: var(--danger);
+}
+
+.Verilen {
+    border-left-color: var(--success);
+}
+
+.btn-status {
+    width: auto;
+    float: right;
+    padding: 6px 15px;
+    font-size: 11px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.unpaid {
+    background: var(--danger);
+    color: white;
+}
+
+.paid {
+    background: var(--success);
+    color: var(--primary);
+}
+
+.is-paid {
+    opacity: 0.5;
+    background: #eee;
+}
+
+.is-paid b,
+.is-paid span {
+    text-decoration: line-through;
+}
+
+.desc-text {
+    color: #666;
+    font-style: italic;
+    font-size: 13px;
+    display: block;
+    margin-top: 4px;
+}

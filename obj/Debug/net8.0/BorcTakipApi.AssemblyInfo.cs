@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BorcTakipApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d75679756c1a11600ae89232dce3e95557282b6c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+58c7ab80ef6bc4b79975bf165f007158130ff0ec")]
 [assembly: System.Reflection.AssemblyProductAttribute("BorcTakipApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BorcTakipApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
