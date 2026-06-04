@@ -1,42 +1,19 @@
-# Borç Takip API & Web Arayüzü
+#  Borç Takip Sistemi (C# & .NET Core Web API)
 
-Bu proje, kişisel veya küçük işletme finans kayıtlarını (alınan ve verilen borçlar) güvenli ve modern bir arayüz ile takip etmenizi sağlayan tam yığın (full-stack) bir web uygulamasıdır.
+Bu proje, C# Uzmanlık Belgesi alabilmek amacıyla geliştirilmiş; bireysel veya kurumsal borç/alacak kayıtlarını güvenli ve performanslı bir şekilde yönetmeyi sağlayan bir **Web API** uygulamasıdır.
 
-## Mimari ve Teknolojiler
+## Canlı Uygulama Linki
+Proje yerel bilgisayar dışında, canlı sunucu ortamında (IIS / Plesk) yayına alınmıştır ve SSL sertifikası (HTTPS) ile korunmaktadır:
+ **[https://borctakip.site](https://borctakip.site)**
 
-Proje, güncel yazılım mühendisliği prensiplerine uygun olarak Backend ve Frontend katmanlarına ayrılmıştır.
+##  Kullanılan Teknolojiler & Mimari
+* **Backend:** C# / .NET Core 6.0 (veya 8.0 hangisiyse) Web API
+* **Veri Tabanı ORM:** Entity Framework Core (Code-First)
+* **Sorgulama Teknolojisi:** LINQ (Filtreleme, Sıralama ve Sayfalama optimizasyonları için)
+* **Güvenlik:** Şifrelerin veri tabanında Hash'lenerek saklanması ve Let's Encrypt SSL mekanizması
+* **Sunucu & Dağıtım:** Windows Server / IIS / Plesk Panel DevOps Yönetimi
 
-### Backend (Arka Uç)
-- **Framework:** .NET 8.0 (ASP.NET Core Web API)
-- **Veritabanı:** Entity Framework Core (SQLite)
-- **Mimari:** MVC (Model-View-Controller) deseni temel alınarak tasarlanmıştır.
-  - `Models/`: Veritabanı tablolarını temsil eden varlık (entity) sınıfları.
-  - `Controllers/`: API isteklerini karşılayan ve iş mantığını yürüten sınıflar.
-  - `Data/`: Veritabanı bağlantı (DbContext) bağlamı.
-
-### Frontend (Ön Yüz)
-- **Teknolojiler:** HTML5, CSS3, Vanilla JavaScript (ES6+ Asenkron Fetch API)
-- **Yapı:** 
-  - Responsive (Mobil uyumlu) tasarım.
-  - Özel CSS değişkenleri (CSS variables) ve modern arayüz (UI) prensipleri.
-  - Tüm statik dosyalar `wwwroot/` klasörü altında izole edilmiştir.
-
-## Kurulum ve Çalıştırma
-
-1. Projeyi bilgisayarınıza indirin veya klonlayın.
-2. Terminal üzerinden proje dizinine gidin.
-3. Uygulamayı ayağa kaldırmak için aşağıdaki komutu çalıştırın:
-   ```bash
-   dotnet run
-   ```
-4. Tarayıcınızdan `http://localhost:5000` veya konsolda belirtilen porta giderek uygulamayı kullanmaya başlayabilirsiniz.
-
-## Özellikler
-
-- **Kullanıcı Yönetimi:** Güvenli oturum açma ve yeni hesap oluşturma.
-- **Finansal Takip:** "Borç Aldım" ve "Borç Verdim" şeklinde detaylı kayıt tutma.
-- **Durum Güncelleme:** Tek tıkla ödenen/alınan borçların statüsünü değiştirme.
-- **Dinamik İstatistikler:** Toplam borç, toplam alacak ve net finansal durumu anlık hesaplama.
-
-## Geliştirici Notu
-Bu proje temiz kod (clean code) prensipleri, modüler dosya yapısı ve modern web standartları gözetilerek özenle geliştirilmiştir.
+##  Proje Özellikleri & Senaryo
+1. **Kullanıcı Yönetimi:** Sisteme kayıt olma ve güvenli giriş (Authentication) mekanizması.
+2. **Borç Yönetimi:** Borçlu ekleme, silme, güncelleme ve detaylı listeleme.
+3. **Veri Validasyonu:** Hatalı veya eksi değerlerin girişini engelleyen akıllı doğrulama (Validation) katmanı.
