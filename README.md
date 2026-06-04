@@ -7,7 +7,7 @@ Proje yerel bilgisayar dışında, canlı sunucu ortamında (IIS / Plesk) yayın
  **[https://borctakip.site](https://borctakip.site)**
 
 ##  Kullanılan Teknolojiler & Mimari
-* **Backend:** C# / .NET Core 6.0 (veya 8.0 hangisiyse) Web API
+* **Backend:** C# / .NET Core 8.0  Web API
 * **Veri Tabanı ORM:** Entity Framework Core (Code-First)
 * **Sorgulama Teknolojisi:** LINQ (Filtreleme, Sıralama ve Sayfalama optimizasyonları için)
 * **Güvenlik:** Şifrelerin veri tabanında Hash'lenerek saklanması ve Let's Encrypt SSL mekanizması
